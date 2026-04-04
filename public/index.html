@@ -1,252 +1,95 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>نظام شكاوى المواطنين</title>
+  <meta charset="UTF-8">
+  <title>Complaint System</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <!-- CSS -->
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f4f4;
+      padding: 20px;
+    }
 
-<style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0b1c2c;
-    color: white;
-    direction: rtl;
-}
+    .container {
+      width: 400px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
 
-/* Navbar */
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    padding: 15px 40px;
-    background: #0f2a3f;
-}
+    h2 {
+      text-align: center;
+    }
 
-.navbar a {
-    color: #00c6ff;
-    text-decoration: none;
-    margin-left: 20px;
-}
+    input, textarea {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
 
-/* Hero */
-.hero {
-    text-align: center;
-    padding: 80px 20px;
-}
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
 
-.hero h1 {
-    font-size: 42px;
-}
-
-.hero p {
-    color: #aaa;
-}
-
-.hero button {
-    padding: 10px 25px;
-    margin: 10px;
-    background: #00c6ff;
-    border: none;
-    cursor: pointer;
-}
-
-/* Form */
-.form {
-    background: #111;
-    padding: 40px;
-    text-align: center;
-}
-
-input, textarea {
-    display: block;
-    width: 300px;
-    margin: 10px auto;
-    padding: 10px;
-}
-
-/* FAQ */
-.faq {
-    background: #0f172a;
-    padding: 50px 20px;
-    text-align: center;
-}
-
-.faq h2 {
-    font-size: 30px;
-}
-
-.faq-item {
-    background: #111827;
-    margin: 10px auto;
-    width: 60%;
-    border-radius: 10px;
-    cursor: pointer;
-    padding: 15px;
-}
-
-.faq-item h3 {
-    margin: 0;
-    color: #00c6ff;
-}
-
-.faq-content {
-    display: none;
-    margin-top: 10px;
-    color: #ccc;
-}
-
-.active .faq-content {
-    display: block;
-}
-</style>
-
+    button:hover {
+      background: #0056b3;
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- Navbar -->
-<div class="navbar">
-    <div>CCS</div>
-    <div>
-        <a href="#">الصفحة الرئيسية</a>
-        <a href="#formSection">تقديم شكوى</a>
-        <a href="#faq">أسئلة متكررة</a>
-    </div>
-</div>
+<div class="container">
+  <h2>Submit Complaint</h2>
 
-<!-- Hero -->
-<div class="hero">
-    <h1>نظام شكاوى المواطنين</h1>
-    <p>البوابة الرسمية لتقديم الشكاوى</p>
-    <button onclick="scrollToForm()">تقديم شكوى</button>
-</div>
+  <input type="text" id="name" placeholder="Name">
+  <input type="text" id="phone" placeholder="Phone">
+  <textarea id="description" placeholder="Description"></textarea>
 
-<!-- Form -->
-<div class="form" id="formSection">
-    <h2>املأ استمارة الشكوى</h2>
-
-    <input type="text" id="name" placeholder="الاسم">
-    <input type="text" id="phone" placeholder="رقم الهاتف">
-    <textarea id="description" placeholder="اكتب المشكلة"></textarea>
-
-    <!-- الخريطة -->
-    <div id="map" style="height:300px;"></div>
-    <p id="coords"></p>
-
-    <input type="file" id="image">
-    <button onclick="sendComplaint()">إرسال</button>
-</div>
-
-<!-- FAQ -->
-<div class="faq" id="faq">
-    <h2>الأسئلة المتكررة</h2>
-
-    <div class="faq-item" onclick="toggleFAQ(this)">
-        <h3>🔹 شلون أقدم شكوى؟</h3>
-        <div class="faq-content">
-            تدخل على صفحة تقديم شكوى<br>
-            تملي المعلومات<br>
-            تضغط إرسال
-        </div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFAQ(this)">
-        <h3>🔹 هل أگدر أتابع حالة الشكوى؟</h3>
-        <div class="faq-content">
-            نعم، تدخل رقم الشكوى أو رقم الهاتف
-        </div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFAQ(this)">
-        <h3>🔹 هل بياناتي تبقى سرية؟</h3>
-        <div class="faq-content">
-            نعم، جميع المعلومات محفوظة وآمنة
-        </div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFAQ(this)">
-        <h3>🔹 كم ياخذ وقت الرد؟</h3>
-        <div class="faq-content">
-            من 3 إلى 7 أيام عمل
-        </div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFAQ(this)">
-        <h3>🔹 هل أگدر أرفع صور؟</h3>
-        <div class="faq-content">
-            نعم، تگدر ترفع صور ومستندات
-        </div>
-    </div>
-
-    <div class="faq-item" onclick="toggleFAQ(this)">
-        <h3>🔹 هل لازم حساب؟</h3>
-        <div class="faq-content">
-            لا، ممكن بدون حساب
-        </div>
-    </div>
-
+  <button onclick="sendComplaint()">Send</button>
 </div>
 
 <script>
+async function sendComplaint() {
 
-// Scroll
-function scrollToForm(){
-    document.getElementById("formSection").scrollIntoView();
-}
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const description = document.getElementById("description").value;
 
-// FAQ toggle
-function toggleFAQ(el){
-    el.classList.toggle("active");
-}
+  const data = {
+    name,
+    phone,
+    description
+  };
 
-// Map
-let selectedLocation = "";
-
-const map = L.map('map').setView([36.19, 44.01], 13);
-
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap'
-}).addTo(map);
-
-let marker;
-
-map.on('click', function(e) {
-  if(marker){
-    map.removeLayer(marker);
-  }
-
-  marker = L.marker(e.latlng).addTo(map);
-
-  selectedLocation = e.latlng.lat + "," + e.latlng.lng;
-
-  document.getElementById("coords").innerText = selectedLocation;
-});
-
-// Send
-async function sendComplaint(){
-
-    const formData = new FormData();
-
-    formData.append("name", document.getElementById("name").value);
-    formData.append("phone", document.getElementById("phone").value);
-    formData.append("description", document.getElementById("description").value);
-    formData.append("location", selectedLocation);
-
-    const file = document.getElementById("image").files[0];
-    if(file){
-        formData.append("image", file);
-    }
-
-    await fetch("http://localhost:3000/api/complaints", {
-        method: "POST",
-        body: formData
+  try {
+    await fetch("https://your-app.onrender.com/api/complaints", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
     });
 
-    alert("تم ارسال الشكوى");
-}
+    alert("تم إرسال الشكوى ✅");
 
+  } catch (error) {
+    alert("خطأ ❌");
+    console.error(error);
+  }
+}
 </script>
 
 </body>
