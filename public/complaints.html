@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Complaints</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f6f9;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    a {
+      display: block;
+      margin-bottom: 20px;
+      color: #007bff;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+<a href="index.html">← Back</a>
+
+<h2>All Complaints</h2>
+
+<div id="list"></div>
+
+<script>
+  let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
+
+  const list = document.getElementById("list");
+
+  complaints.forEach(c => {
+    const div = document.createElement("div");
+    div.className = "card";
+
+    div.innerHTML = `
+      <h3>${c.name}</h3>
+      <p><b>Phone:</b> ${c.phone}</p>
+      <p>${c.description}</p>
+    `;
+
+    list.appendChild(div);
+  });
+</script>
+
+</body>
+</html>
