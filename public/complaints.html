@@ -1,55 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <title>Complaints</title>
-  <style>
-    body {
-      font-family: Arial;
-      background: #f4f6f9;
-      padding: 20px;
-    }
+<meta charset="UTF-8">
+<title>الشكاوى</title>
 
-    .card {
-      background: white;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
+<style>
+body {
+  font-family: Arial;
+  background: #f4f6f9;
+  padding: 20px;
+  direction: rtl;
+}
 
-    a {
-      display: block;
-      margin-bottom: 20px;
-      color: #007bff;
-      text-decoration: none;
-    }
-  </style>
+h2 {
+  text-align: center;
+}
+
+.card {
+  background: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+img {
+  width: 200px;
+  margin-top: 10px;
+  border-radius: 8px;
+}
+
+a {
+  display: block;
+  margin-bottom: 20px;
+}
+</style>
 </head>
+
 <body>
 
-<a href="index.html">← Back</a>
+<a href="index.html">⬅ رجوع</a>
 
-<h2>All Complaints</h2>
+<h2>📋 جميع الشكاوى</h2>
 
 <div id="list"></div>
 
 <script>
-  let complaints = JSON.parse(localStorage.getItem("complaints")) || [];
+const list = document.getElementById("list");
 
-  const list = document.getElementById("list");
+// 🔥 جلب البيانات من السيرفر (MySQL)
+fetch("http://localhost:3000/api/complaints")
+  .then(res => res.json())
+  .then(data => {
 
-  complaints.forEach(c => {
-    const div = document.createElement("div");
-    div.className = "card";
+    data.forEach(c => {
+      const div = document.createElement("div");
+      div.className = "card";
 
-    div.innerHTML = `
-      <h3>${c.name}</h3>
-      <p><b>Phone:</b> ${c.phone}</p>
-      <p>${c.description}</p>
-    `;
+      div.innerHTML = `
+        <h3>${c.name}</h3>
+        <p><b>📞 الهاتف:</b> ${c.phone}</p>
+        <p>${c.description}</p>
+        ${
+          c.file_path 
+          ? `<img src="http://localhost:3000/uploads/${c.file_path}" />` 
+          : ""
+        }
+        <p>📅 ${new Date(c.created_at).toLocaleString()}</p>
+      `;
 
-    list.appendChild(div);
+      list.appendChild(div);
+    });
+
+  })
+  .catch(err => {
+    console.log(err);
+    list.innerHTML = "❌ خطأ في جلب البيانات";
   });
 </script>
 
